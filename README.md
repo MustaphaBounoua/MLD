@@ -7,6 +7,5 @@
 Official implementation of Multi-modal Latent Diffusion
 
 
-## Requirements
-List of packages (see also `requirements.txt`)
+
 

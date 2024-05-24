@@ -51,16 +51,19 @@ class CelebAHQMaskDS(Dataset):
         self.attributes = attr_list[1].strip().split(" ")
         assert len(self.attributes) == 40
         
-        # for i in range(len(self.img_files)):
-        #     assert self.img_files[i].split("/")[-1][:-4] == self.mask_files[i].split("/")[-1][:-4]
+        
+        if os.path.exists(datapath +"att.pth"):
+            for i in range(len(self.img_files)):
+                assert self.img_files[i].split("/")[-1][:-4] == self.mask_files[i].split("/")[-1][:-4]
 
-        #     img_idx = int(self.img_files[i].split("/")[-1][:-4])
-        #     attr_i = attr_list[img_idx + 2].strip().split(" ")
-        #     assert img_idx == int(attr_i[0][:-4])
-        #     attr_i01 = torch.tensor([1 if a == '1' else 0 for a in attr_i[2:]])
-        #     self.attr_tensor[i] = attr_i01
+                img_idx = int(self.img_files[i].split("/")[-1][:-4])
+                attr_i = attr_list[img_idx + 2].strip().split(" ")
+                assert img_idx == int(attr_i[0][:-4])
+                attr_i01 = torch.tensor([1 if a == '1' else 0 for a in attr_i[2:]])
+                self.attr_tensor[i] = attr_i01
 
-        # torch.save(self.attr_tensor, datapath +"att.pth")
+            torch.save(self.attr_tensor, datapath +"att.pth")
+        
         self.attr_tensor = torch.load("/home/bounoua/work/mld/data/data_celba/CelebAMask-HQ/att.pth")[:, attr_visible]
         N = 25000
         if train :

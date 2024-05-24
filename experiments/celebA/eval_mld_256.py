@@ -7,7 +7,7 @@ from src.utils import create_forlder
 import os
 from src.utils import get_stat_from_file,get_root_folder
 from src.models.MLD import MLD
-from src.unimodal_vae.BaseAE import AE
+from src.unimodal.BaseAE import AE
 from src.models.LateFusionAE import LateFusionAE
 from pytorch_lightning import Trainer, seed_everything
 from src.dataLoaders.celebA.CelebA import CelebAHQMaskDS ,Dataset_latent

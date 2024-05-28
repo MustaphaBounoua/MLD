@@ -9,7 +9,7 @@ from src.utils import set_subset,set_paths_fid
 from src.abstract.generative_model import GenerativeModel
 from abc import ABC, abstractmethod
 from src.eval.representation import train_clf_lr_all_subsets, test_clf_lr_all_subsets
-from src.eval.coherence import  test_Clip , test_gen_base,test_restoration ,test_celebA
+from src.eval.coherence import  test_Clip , test_gen_base ,test_celebA
 from src.logger.utils import log_results_train_step,log_results_eval_step,flatten_dict ,log_modalities, log_cond_modalities
 from src.eval.sample_quality import compute_fad, compute_fid
 
@@ -300,59 +300,6 @@ class MG(pl.LightningModule, GenerativeModel,ABC):
         return res
 
 
-
-    def evaluation_restoration(self,noise_level,ts=None):
-
-        print("Evaluation using {} batchs with noise level {}".format(self.nb_batchs,noise_level))
-
-        if self.logger != None:
-            self.logdir = self.logger.log_dir
-            self.paths_fid = set_paths_fid(folder =self.logdir ,subsets=self.subset_list_dict)
-        else:
-            self.paths_fid = set_paths_fid(folder ="trained_models/temp",subsets=self.subset_list_dict)
-
-        print("Coherence eval")
-        if self.dataset =="CUB":
-            cohrence = test_Clip(
-                                        model = self,
-                                        modalities_list= self.modalities_list,
-                                        d_loader=self.test_loader,
-                                        batch_size = self.train_batch_size ,
-                                        num_samples_fid = self.n_fd,
-                                        device=self.device,
-                                        do_fd = self.do_fd,
-                                        limit_clip= self.limit_clip,
-                                        path_fid = self.paths_fid,
-                                        nb_batchs = self.nb_batchs
-            ) 
-            res = {"Coherence": cohrence }
-
-        
-        else:
-            cohrence,fid,psnr = test_restoration(model = self, subset_list = self.subset_list,
-                                        modalities_list= self.modalities_list,
-                                        d_loader=self.test_loader,
-                                        batch_size = self.train_batch_size ,
-                                        num_samples_fid = self.n_fd,
-                                        device=self.device,
-                                        do_fd = self.do_fd,
-                                        do_psnr=True,
-                                        path_fid = self.paths_fid,
-                                        nb_batchs = self.nb_batchs , noise_level= noise_level,
-                                        ts = ts)
-        
-            res = {
-            "Coherence": flatten_dict( cohrence ),
-            "psnr": psnr,
-            "fid": fid}
-          
-            if self.do_fd:
-               # fids = compute_fid(path_list=self.paths_fid,modalities_dict=self.modalities_list_dict,subset_dict=self.subset_list_dict,device =self.device)
-                fads = compute_fad(path_list=self.paths_fid,modalities_dict=self.modalities_list_dict,subset_dict=self.subset_list_dict,device =self.device)
-               # res["FID"] = fids
-                res["FAD"] = fads
-        print(str(res))
-        return res
 
 
 

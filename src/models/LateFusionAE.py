@@ -8,6 +8,7 @@ from src.components.sde import VP_SDE
 from src.utils import get_stat
 import os
 import pickle
+
 class LateFusionAE(MG):
     """ 
     
@@ -81,13 +82,11 @@ class LateFusionAE(MG):
     
     
     
-    
+    ## Used to reproduce results in Figure A.1
     def compute_loss(self, x):
+        
         self.sde.device = self.device
-        # self.stat = get_stat(data_loader= self.train_loader, 
-        #          modalities_list= list(self.modalities_list_dict.keys()),
-        #          device= self.device,
-        #          ae_model= self)
+       
         self.eval()
         with torch.no_grad():
             encodings = self.encode(x)
